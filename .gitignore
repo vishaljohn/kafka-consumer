@@ -1,0 +1,15 @@
+*.class
+*.log
+*.cache
+*.settings
+*.DS_Store
+*.classpath
+*.history
+*.project
+
+*/target/*
+target/*
+
+*/bin/*
+bin/*
+dist/*
