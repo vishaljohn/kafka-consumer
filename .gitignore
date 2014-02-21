@@ -8,8 +8,10 @@
 *.project
 
 */target/*
+
 target/*
 
 */bin/*
+
 bin/*
-dist/*
+
