@@ -12,14 +12,14 @@ import kafka.message.Message
 object Runner {
 
   def main(args: Array[String]): Unit = {
-    val host = "10.29.29.208"
+    val host = "localhost"
     val port = 2181
     val socketTimeoutMs = 5000
     val bufferSizeBytes = 1024*1024
     val clientId = "VJ_TEST_CLIENT"
     val simpleConsumer = new SimpleConsumer(host, port, socketTimeoutMs, bufferSizeBytes, clientId)
     //val offsetReq = new OffsetRequest()
-    val topic = "comments"
+    val topic = "api"
     val partition = 0
     val time = System.currentTimeMillis() - 1000
     //simpleConsumer.getOffsetsBefore(topic, partition, time, maxNumOffsets = 1)
@@ -27,7 +27,7 @@ object Runner {
     //simpleConsumer.fetch(fetchReq)
 
     val props = new Properties()
-    props.put("zookeeper.connect", "10.29.29.208:2181")
+    props.put("zookeeper.connect", "localhost:2181")
     props.put("group.id", "1")
     props.put("zk.sessiontimeout.ms", "5000")
     props.put("zk.synctime.ms", "200")
@@ -36,16 +36,20 @@ object Runner {
     val consumerConnector = Consumer.createJavaConsumerConnector(config)
     //val consumerMap = consumerMap
     val topicCountMap = new java.util.HashMap[String, Integer]
-    topicCountMap.put("comments", new Integer(1))
+    topicCountMap.put("api", new Integer(1))
     val consumerMap = consumerConnector.createMessageStreams(topicCountMap)
-    val kafkaMessageStream = consumerMap.get(topic).get(0)
-    println("After cconsumerMap.get==>")
-    val consumerIterator = kafkaMessageStream.iterator()
+    val consumerIterator = consumerMap.get(topic).iterator()
+    var i = 1
     while(consumerIterator.hasNext()) {
-      val msg = consumerIterator.next()
-      println(new String(msg.message))
+      val kafkaStream = consumerIterator.next()
+      val msgIterator = kafkaStream.iterator()
+      while (msgIterator.hasNext()) {
+        val msg = msgIterator.next()
+        println(i + "::topic: " + msg.topic + " message: " + new String(msg.message) + " key: " + msg.key + " partition: " + msg.partition + " offset:" + msg.offset)
+        
+      }
+      i+= 1
     }
-    println("Succesfully completed")
 
   }
 
